@@ -11,7 +11,7 @@ def canny(image):
     return canny
 
 def display_lines(image, lines):
-    line_image = np.zeros_likse(image)
+    line_image = np.zeros_like(image)
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line.reshape(4)
