@@ -31,8 +31,8 @@ def region_of_interest(image):
     return masked_image
 
 lane_image = np.copy(image)
-c = canny(lane_image)
-cropped = region_of_interest(c)
+canny_image = canny(lane_image)
+cropped = region_of_interest(canny_image)
 
 lines = cv2.HoughLinesP(cropped, 2,
                         np.pi/180, 100,
