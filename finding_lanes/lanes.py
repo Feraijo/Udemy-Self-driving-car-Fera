@@ -1,8 +1,10 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
-image = cv2.imread('Image/test_image.jpg')
+filepath = os.path.dirname(os.path.relpath(__file__))
+image = cv2.imread(filepath+'/Image/test_image.jpg')
 
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
