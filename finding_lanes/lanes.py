@@ -10,6 +10,16 @@ def canny(image):
     canny = cv2.Canny(blur, 50, 150)
     return canny
 
+def display_lines(image, lines):
+    line_image = np.zeros_like(image)
+    if lines is not None:
+        for line in lines:
+            x1, y1, x2, y2 = line.reshape(4)
+            cv2.line(line_image,
+                     (x1, y1), (x2, y2),
+                     (255, 0, 0), 10)
+    return line_image
+
 def region_of_interest(image):
     height, width = image.shape
     triangle = np.array([[(200, height),
@@ -17,12 +27,23 @@ def region_of_interest(image):
                          (550, 250)]])
     mask = np.zeros_like(image)
     cv2.fillPoly(mask, triangle, 255)
-    return mask
+    masked_image = cv2.bitwise_and(image, mask)
+    return masked_image
 
 lane_image = np.copy(image)
 c = canny(lane_image)
+cropped = region_of_interest(c)
 
+lines = cv2.HoughLinesP(cropped, 2,
+                        np.pi/180, 100,
+                        np.array([]),
+                        minLineLength=40,
+                        maxLineGap=5)
+
+line_image = display_lines(lane_image, lines)
+combo_image = cv2.addWeighted(lane_image, 0.8,
+                              line_image, 1, 1)
 #plt.imshow(c)
 #plt.show()
-cv2.imshow('res', region_of_interest(c))
+cv2.imshow('res', combo_image)
 cv2.waitKey(0)
