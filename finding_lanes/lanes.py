@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 filepath = os.path.dirname(os.path.relpath(__file__))
-image = cv2.imread(filepath+'/Image/test_image.jpg')
+#image = cv2.imread(filepath+'/Image/test_image.jpg')
 
 def make_coords(image, line_parameters):
     slope, intercept = line_parameters
@@ -55,21 +55,41 @@ def region_of_interest(image):
     masked_image = cv2.bitwise_and(image, mask)
     return masked_image
 
-lane_image = np.copy(image)
-canny_image = canny(lane_image)
-cropped = region_of_interest(canny_image)
+# lane_image = np.copy(image)
+# canny_image = canny(lane_image)
+# cropped = region_of_interest(canny_image)
 
-lines = cv2.HoughLinesP(cropped, 2,
-                        np.pi/180, 100,
-                        np.array([]),
-                        minLineLength=40,
-                        maxLineGap=5)
-                        
-averaged_lines = average_slope_intercept(lane_image, lines)
-line_image = display_lines(lane_image, averaged_lines)
-combo_image = cv2.addWeighted(lane_image, 0.8,
-                              line_image, 1, 1)
-#plt.imshow(c)
-#plt.show()
-cv2.imshow('res', combo_image)
-cv2.waitKey(0)
+# lines = cv2.HoughLinesP(cropped, 2,
+#                         np.pi/180, 100,
+#                         np.array([]),
+#                         minLineLength=40,
+#                         maxLineGap=5)
+
+# averaged_lines = average_slope_intercept(lane_image, lines)
+# line_image = display_lines(lane_image, averaged_lines)
+# combined_image = cv2.addWeighted(lane_image, 0.8,
+#                               line_image, 1, 1)
+# #plt.imshow(c)
+# #plt.show()
+# cv2.imshow('res', combined_image)
+# cv2.waitKey(0)
+
+cap = cv2.VideoCapture('test2.mp4')
+while (cap.isOpened()):
+    _, frame = cap.read()
+    canny_image = canny(frame)
+    cropped = region_of_interest(canny_image)
+    lines = cv2.HoughLinesP(cropped, 2,
+                            np.pi/180, 100,
+                            np.array([]),
+                            minLineLength=40,
+                            maxLineGap=5)
+    averaged_lines = average_slope_intercept(frame, lines)
+    line_image = display_lines(frame, averaged_lines)
+    combined_image = cv2.addWeighted(frame, 0.8,
+                                line_image, 1, 1)    
+    cv2.imshow('res', combined_image)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+cap.release()
+cv2.destroyAllWindows()
